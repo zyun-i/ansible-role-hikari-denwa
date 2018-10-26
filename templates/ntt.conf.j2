@@ -1,0 +1,7 @@
+register => {{ hikari_denwa_telno }}@{{ hikari_denwa_domain }}@{{ hikari_denwa_sip_server }}/{{ hikari_denwa_telno }}
+
+[ntt]
+type=peer
+host={{ hikari_denwa_sip_server }}
+context=fromntt
+fromdomain={{ hikari_denwa_domain }}

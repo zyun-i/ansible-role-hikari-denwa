@@ -1,0 +1,46 @@
+---
+- name:
+  apt:
+    name:
+      - build-essential
+      - libedit-dev
+      - uuid-dev
+      - libjansson-dev
+      - libxml2-dev
+      - libsqlite3-dev
+    state: present
+
+- name: check file
+  stat:
+    path: /usr/sbin/asterisk
+  register: f
+
+- name: Download src code.
+  get_url: 
+    url: http://downloads.asterisk.org/pub/telephony/asterisk/asterisk-16-current.tar.gz
+    dest: /usr/local/src/asterisk-16-current.tar.gz
+    checksum: sha256:49fae7b140ef579c5a31eb77ef4e433e3a28d9db6cae1c16fe05fdf41e4b263d
+
+- name: Unarchive a file that is already on the remote machine
+  unarchive:
+    src: /usr/local/src/asterisk-16-current.tar.gz
+    dest: /usr/local/src
+    remote_src: yes
+  when: not f.stat.exists
+
+- name: configure, make, make install
+  command: "{{ item }}"
+  args:
+    chdir: /usr/local/src/asterisk-16.0.0
+  with_items:
+    - ./configure
+    - make
+    - make install
+    - make samples
+    - make config
+  when: not f.stat.exists
+
+- name: template
+  template:
+    src: ntt.conf.j2
+    dest: /etc/asterisk/ntt.conf
