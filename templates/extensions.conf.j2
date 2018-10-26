@@ -1,0 +1,27 @@
+[general]
+writeprotect=no
+priorityjumping=no
+
+[globals]
+GROUP1=SIP/201&SIP/202&SIP/203&SIP/204
+GROUP2=SIP/205&SIP/206&SIP/207&SIP/208
+
+MYNUMBER={{ hikari_denwa_telno }}
+
+[default]
+exten => 200,1,NoOp(内線代表着信)
+exten => 200,n,Dial(${GROUP1},60)
+exten => 200,n,Hangup
+
+exten => _20Z,1,NoOp(内線呼出)
+exten => _20Z,n,Dial(SIP/${EXTEN},60)
+exten => _20Z,n,Hangup
+
+exten => _0.,1,NoOp(ひかり電話0発信)
+exten => _0.,n,Dial(SIP/${EXTEN}@ntt)
+
+[incoming]
+
+exten => ${MYNUMBER},1,NoOp(HIKARI DENWA)
+exten => ${MYNUMBER},n,Dial(${GROUP1},60)
+
